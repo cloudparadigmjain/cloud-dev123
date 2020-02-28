@@ -1,60 +1,29 @@
-var port = process.env.PORT || 3000,
-    http = require('http'),
-    fs = require('fs');
+const express = require("express");
+const bodyParser = require("body-parser");
+const app = express();
+app.use(bodyParser.urlencoded({extended: true}));
+app.use(express.static("public"));
 
-var app = http.createServer(function (req, res) {
-  if (req.url.indexOf('/img') != -1) {
-    var filePath = req.url.split('/img')[1];
-    fs.readFile(__dirname + '/public/img' + filePath, function (err, data) {
-      if (err) {
-        res.writeHead(404, {'Content-Type': 'text/plain'});
-        res.write('Error 404: Resource not found.');
-        console.log(err);
-      } else {
-        res.writeHead(200, {'Content-Type': 'image/svg+xml'});
-        res.write(data);
-      }  
-      res.end();
-    });
-  } else if (req.url.indexOf('/js') != -1) {
-    var filePath = req.url.split('/js')[1];
-    fs.readFile(__dirname + '/public/js' + filePath, function (err, data) {
-      if (err) {
-        res.writeHead(404, {'Content-Type': 'text/plain'});
-        res.write('Error 404: Resource not found.');
-        console.log(err);
-      } else {
-        res.writeHead(200, {'Content-Type': 'text/javascript'});
-        res.write(data);
-      }  
-      res.end();
-    });
-  } else if(req.url.indexOf('/css') != -1) {
-    var filePath = req.url.split('/css')[1];
-    fs.readFile(__dirname + '/public/css' + filePath, function (err, data) {
-      if (err) {
-        res.writeHead(404, {'Content-Type': 'text/plain'});
-        res.write('Error 404: Resource not found.');
-        console.log(err);
-      } else {
-        res.writeHead(200, {'Content-Type': 'text/css'});
-        res.write(data);
-      }
-      res.end();
-    });
-  } else {
-    fs.readFile(__dirname + '/public/index.html', function (err, data) {
-      if (err) {
-        res.writeHead(404, {'Content-Type': 'text/plain'});
-        res.write('Error 404: Resource not found.');
-        console.log(err);
-      } else {
-        res.writeHead(200, {'Content-Type': 'text/html'});
-        res.write(data);
-      }
-      res.end();
-    });
-  }
-}).listen(port, '0.0.0.0');
+app.get("/", function(req,res){
+  res.sendFile(__dirname + "/index.html");
+});
+
+app.post("/", function(req,res){
+  var num1 = Number(req.body.num1);
+  var num2 = Number(req.body.num2);
+  var result = num1+num2;
+
+  res.send("The Answer is:" + result);
+});
+
+let port = process.env.PORT;
+if(port == null || port == "") {
+  port = 3000;
+}
+
+app.listen(port, function() {
+  console.log("Server started Successfully");
+});
+
 
 module.exports = app;

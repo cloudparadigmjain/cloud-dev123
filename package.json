@@ -13,6 +13,7 @@
     "start": "node app.js"
   },
   "dependencies": {
+    "express": "^4.17.1",
     "forever": "2.0.0"
   }
 }

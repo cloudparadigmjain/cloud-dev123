@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Distance</title>
+    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places&key=AIzaSyDYRICW4Bm4donS0-9LCp_h0nlsyWvEuGY"></script>
+    <script src="autocomplete.js"></script>
+
+
+  </head>
+  <body>
+    <h1>Let's Calculate Distance</h1>
+
+    <form class="" action="/from" method="post">
+    <input id="searchTextField" type="text" size="50" name="from" placeholder="FROM">
+    <input id="searchTextField2" type="text" size="50" name="to" placeholder="TO">
+    <button type="submit" name="button">Submit</button>
+    </form>
+<h1> <%= distance %> </h1>
+
+
+  </body>
+</html>

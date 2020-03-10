@@ -1,23 +1,43 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
+const _ = require("lodash");
+const https = require("https");
+var dist = 0;
+
 const app = express();
+
+app.set('view engine', 'ejs');
+
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(express.static("public"));
 
-app.get("/", function(req,res){
-  res.sendFile(__dirname + "/index.html");
+
+app.get("/", function(req,res) {
+  res.render("home");
 });
 
-app.get("/login", function(req,res){
-  res.sendFile(__dirname + "/public/login.html");
+app.get("/home", function(req,res) {
+  res.render("index",{distance:dist});
 });
 
-app.post("/", function(req,res){
-  var num1 = Number(req.body.num1);
-  var num2 = Number(req.body.num2);
-  var result = num1+num2;
+app.get("/home1", function(req,res) {
+  res.render("directions");
+});
 
-  res.send("The Answer is:" + result);
+app.post("/from", function(req,res) {
+  const from = req.body.from;
+  const to = req.body.to;
+  const url = "https://maps.googleapis.com/maps/api/distancematrix/json?units=metrics&origins="+ from +"&destinations="+ to +"&key=AIzaSyDYRICW4Bm4donS0-9LCp_h0nlsyWvEuGY";
+  https.get(url, function(response) {
+    console.log(response.statuscode);
+
+    response.on("data", function(data){
+      const distanceData = JSON.parse(data);
+      const dist = distanceData.rows[0].elements[0].distance.text;
+      res.render("index",{distance:dist});
+    });
+  });
 });
 
 let port = process.env.PORT;

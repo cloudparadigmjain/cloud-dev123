@@ -3,6 +3,8 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const _ = require("lodash");
 const https = require("https");
+var serveStatic = require('serve-static')
+var path = require('path')
 var dist = 0;
 
 const app = express();
@@ -10,7 +12,7 @@ const app = express();
 app.set('view engine', 'ejs');
 
 app.use(bodyParser.urlencoded({extended: true}));
-app.use(express.static("public"));
+app.use(serveStatic(path.join(__dirname, 'public')))
 
 
 app.get("/", function(req,res) {

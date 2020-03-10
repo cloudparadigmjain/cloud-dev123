@@ -9,3 +9,5 @@ npm install ejs
 npm install mongoose
 npm install lodash
 npm install https
+npm install serve-static
+npm install path

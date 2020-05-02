@@ -308,7 +308,7 @@ function delay() {
   res.redirect("/users/" + req.user.username + "/placeorder/order-details");
 }
 
-setTimeout(delay,1000);
+setTimeout(delay,2000);
 
 
 

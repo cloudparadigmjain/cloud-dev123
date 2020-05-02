@@ -1,23 +1,18 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-  <head>
-    <meta charset="utf-8">
-    <title>Distance</title>
-    <script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=false&libraries=places&key=AIzaSyDYRICW4Bm4donS0-9LCp_h0nlsyWvEuGY"></script>
-    <script src="autocomplete.js"></script>
+<%- include('partials/header') %>
 
 
-  </head>
-  <body>
-    <h1>Let's Calculate Distance</h1>
+<div class="jumbotron centered">
+  <div class="container">
+    <i class="fas fa-key fa-6x"></i>
+    <h1 class="display-3">To Deliver Login or Register</h1>
+    <p class="lead">World's Leading Delivery Platform</p>
+    <hr>
+    <a class="btn btn-light btn-lg" href="/register" role="button">Register</a>
+    <a class="btn btn-dark btn-lg" href="/login" role="button">Login</a>
+  </div>
+  </div>
+  <div class="jumbotron centered">
+    
+</div>
 
-    <form class="" action="/from" method="post">
-    <input id="searchTextField" type="text" size="50" name="from" placeholder="FROM">
-    <input id="searchTextField2" type="text" size="50" name="to" placeholder="TO">
-    <button type="submit" name="button">Submit</button>
-    </form>
-<h1> <%= distance %> </h1>
-
-
-  </body>
-</html>
+<%- include('partials/footer') %>

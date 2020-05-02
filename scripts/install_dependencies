@@ -11,3 +11,6 @@ npm install lodash
 npm install https
 npm install serve-static
 npm install path
+npm install express-session
+npm install passport
+npm install passport-local-mongoose

@@ -6,6 +6,7 @@ const session = require('express-session');
 const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 var https = require("https");
+var path = require("path");
 // var googleMapsClient = require('@google/maps').createClient({
 //   key: 'AIzaSyDYRICW4Bm4donS0-9LCp_h0nlsyWvEuGY'
 // });
@@ -41,7 +42,15 @@ const clientSchema = new mongoose.Schema({
   aadhar:String,
   phoneno:String,
   dl:String,
-  bikeid:String
+  bikeid:String,
+  isAdmin: {
+    type: Boolean,
+    default: false
+  },
+  isDriver: {
+    type: Boolean,
+    default: false
+  }
 });
 
 const clientRegisteredSchema = new mongoose.Schema({
@@ -106,6 +115,9 @@ app.get("/register", function(req,res) {
 });
 
 
+
+
+
 function embed(x) {
 
   var regClient = new ClientRegistered({
@@ -118,7 +130,8 @@ function embed(x) {
 }
 
 app.post("/register", function(req,res) {
-  Client.register({username: req.body.username,aadhar:req.body.aadhar,phoneno:req.body.number,dl:req.body.dl,bikeid:req.body.bikeID},req.body.password, function(err,user){
+  Client.register({username: req.body.username,aadhar:req.body.aadhar,phoneno:req.body.number,dl:req.body.dl,bikeid:req.body.bikeID,isDriver:req.body.driver},req.body.password, function(err,user){
+    console.log(req.body);
     if(err) {
       console.log(err);
       res.redirect("/register");
@@ -164,20 +177,45 @@ req.login(user, function(err) {
         if(err) {
           console.log(err);
            } else {
-            var obj1 = new loginHandler(document);
+            var obj1 = new loginHandler(document); //Passing document as embedding for embedding in Order-History
             docvar = docReturn(obj1.doc);
             console.log("Docvar", docvar);
-
+          }
+      });
+      Client.findOne({username: req.body.username}, function(err, clientType) {
+        if(err) {
+          console.log(err);
+        } else {
+          if(clientType.isDriver===true && clientType.isAdmin===false) {
+            res.redirect("/drivers/" + user.username+ "/profile");
+          } else if(clientType.isDriver===false && clientType.isAdmin===false) {
+            res.redirect("/users/" + user.username);
+          } else {
+            res.redirect("/adminPortal/" + user.username+ "/driversmap");
+          }
         }
-      })
-        res.redirect("/users/" + user.username);
+      });
       });
   }
 });
 });
 
-app.get("/users/:username", function(req,res) {
+app.get("/adminPortal/:username/driversmap", function(req,res) {
+  if(req.isAuthenticated()) {
+    res.render("adminPortal/subscribe-location");
+  }
+      
+});
 
+app.get("/drivers/:username/profile", function(req,res) {
+  if(req.isAuthenticated()) {
+    res.render("drivers/publish-location", {driverName: req.user.username});
+  } else{
+    res.redirect("/login");
+  }
+});
+
+app.get("/users/:username", function(req,res) {
 if(req.isAuthenticated()) {
   Client.findOne({username: req.params.username}, function(err,results) {
     if(err) {

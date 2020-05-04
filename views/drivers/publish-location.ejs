@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <title>Google Maps Example</title>
+    <script src="https://cdn.pubnub.com/sdk/javascript/pubnub.4.27.6.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" />
+</head>
+<body>
+  <div>
+    <h1>Driver you are in</h1>
+    <h1 id="driverName"><%= driverName %></h1>
+  </div>
+  <a href="/logout">Logout</a>
+    <script id="name">
+
+var a = document.getElementById("driverName");
+    var b = a.innerText;
+    console.log(b);
+
+    var pnChannel = b;
+
+        function getLocation() {
+            if (navigator.geolocation) {
+            navigator.geolocation.watchPosition(updatePosition);
+         }
+      
+        return null;
+    };
+
+    function updatePosition(position) {
+      if (position) {
+        window.lat = position.coords.latitude;
+        window.lng = position.coords.longitude;
+      }
+    }
+    
+    setInterval(function(){updatePosition(getLocation());}, 3000);
+
+    function currentLocation() {
+      return {lat:window.lat, lng:window.lng};
+    };
+
+    
+
+    var pubnub = new PubNub({
+      publishKey:   'pub-c-4fe2d8f8-74ed-4d6a-93c4-149e68832d07',
+      subscribeKey: 'sub-c-db832570-885f-11ea-a961-f6bfeb2ef611'
+    });
+
+    setInterval(function() {
+      pubnub.publish({
+          channel: pnChannel, 
+          message:currentLocation()
+        });
+    }, 1000);
+    
+    </script>
+</body>
+</html>

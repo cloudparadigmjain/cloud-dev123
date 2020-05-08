@@ -21,7 +21,7 @@ var a = document.getElementById("driverName");
     var b = a.innerText;
     console.log(b);
 
-    var pnChannel = b;
+    var pnChannel = 'ch1';
 
         function getLocation() {
             if (navigator.geolocation) {
@@ -38,7 +38,7 @@ var a = document.getElementById("driverName");
       }
     }
     
-    setInterval(function(){updatePosition(getLocation());}, 3000);
+    setInterval(function(){updatePosition(getLocation());}, 10000);
 
     function currentLocation() {
       return {lat:window.lat, lng:window.lng};
@@ -56,7 +56,7 @@ var a = document.getElementById("driverName");
           channel: pnChannel, 
           message:currentLocation()
         });
-    }, 1000);
+    }, 5000);
     
     </script>
 </body>

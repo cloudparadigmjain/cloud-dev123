@@ -1,3 +1,4 @@
+var time = require('express-timestamp')
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -7,10 +8,14 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 var https = require("https");
 var path = require("path");
+var AWS = require('aws-sdk');
+
+
+
 // var googleMapsClient = require('@google/maps').createClient({
 //   key: 'AIzaSyDYRICW4Bm4donS0-9LCp_h0nlsyWvEuGY'
 // });
-
+var driverChannelArr = [];
 var a1;
 var a2="jatin";
 //var flag=true;
@@ -26,6 +31,7 @@ var pubnub = new PubNub({
     secretKey: "sec-c-YWM1MzAyMGYtODljNi00MGJmLWFhM2MtNWVkNjBiNGI5NzEy"
 });
 
+app.use(time.init)
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
@@ -46,6 +52,10 @@ mongoose.set("useCreateIndex", true);
 
 
 const clientSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true
+  },
   username: String,
   password: String,
   aadhar:String,
@@ -139,7 +149,7 @@ function embed(x) {
 }
 
 app.post("/register", function(req,res) {
-  Client.register({username: req.body.username,aadhar:req.body.aadhar,phoneno:req.body.number,dl:req.body.dl,bikeid:req.body.bikeID,isDriver:req.body.driver},req.body.password, function(err,user){
+  Client.register({username: req.body.username,aadhar:req.body.aadhar,phoneno:req.body.number,dl:req.body.dl,bikeid:req.body.bikeID,isDriver:req.body.driver,name:req.body.name},req.body.password, function(err,user){
     console.log(req.body);
     if(err) {
       console.log(err);
@@ -209,9 +219,6 @@ req.login(user, function(err) {
 });
 });
 
-app.get("/test", function(req,res) {
-  res.render("drivers/test");
-});
 
 app.get("/adminPortal/:username/driversmap", function(req,res) {
   if(req.isAuthenticated()) {
@@ -222,7 +229,8 @@ app.get("/adminPortal/:username/driversmap", function(req,res) {
 
 app.get("/drivers/:username/profile", function(req,res) {
   if(req.isAuthenticated()) {
-    res.render("drivers/publish-location", {driverName: req.user.username});
+    res.render("drivers/publish-location", {driverName: req.user.name});
+    console.log(req.user,"for screen name");
   } else{
     res.redirect("/login");
   }
@@ -392,19 +400,55 @@ setTimeout(delay,2000);
       if(err) {
         console.log(err);
       } else {
+        var pubnub = new PubNub({
+          subscribeKey: "sub-c-db832570-885f-11ea-a961-f6bfeb2ef611",
+          publishKey: "pub-c-4fe2d8f8-74ed-4d6a-93c4-149e68832d07",
+          uuid: "myUniqueUUIDServer",
+          secretKey: "sec-c-YWM1MzAyMGYtODljNi00MGJmLWFhM2MtNWVkNjBiNGI5NzEy"
+      });
+      
+      var jatin = "Japani";
+      var mahir = "Basoda";
+      
+      pubnub.publish({
+          channel: 'orderBroadcast', 
+          message:jatin+ mahir
+        }, function(status, response) {
+            if(status.error) {
+                console.log(status);
+                
+            } else {
+                console.log(response, "jatin");
+                
+            }
+        });
         res.render("users/payment", {name: results.username});
       }
     });
   });
 
-  pubnub.channelGroups.addChannels(
+  
+  Client.find({}, "name", function(err,found) {
+    if(err) {
+      console.log(err);
+    } else {
+      console.log(found,"Found Driver channel");
+      for(let i=0;i<found.length;i++) {
+        driverChannelArr.push(found[i].name);
+      }
+      console.log(driverChannelArr);
+    }
+  });
+
+
+  pubnub.channelGroups.addChannels( 
     {
-        channels: ['ch1', 'ch2','ch3'],
+        channels: ['hrishi','jatin'],
         channelGroup: "myChannelGroup"
     }, 
     function(status) {
         if (status.error) {
-            console.log("operation failed w/ status: ", status);
+            console.log("operation failed w/ status: ", status,driverChannelArr);
         } else {
             console.log("operation done!", status);
         }
@@ -425,6 +469,15 @@ setTimeout(delay,2000);
       console.log(err);
   });
   
+  app.post("/recieve", function(req,res) {
+    console.log(req.timestamp);
+    console.log(req.query);
+    
+   console.log(req.body.value);
+   
+  
+    
+  })
 
 
   let port = process.env.PORT;

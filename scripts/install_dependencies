@@ -13,6 +13,4 @@ npm install serve-static
 npm install path
 npm install express-session
 npm install passport
-npm install passport-local-mongoose
-npm install express-timestamp
-npm install aws-sdk
+npm install passport-local-mongooseß

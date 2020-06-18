@@ -1,4 +1,4 @@
-var time = require('express-timestamp')
+//var time = require('express-timestamp')
 const express = require("express");
 const bodyParser = require("body-parser");
 const ejs = require("ejs");
@@ -8,7 +8,7 @@ const passport = require("passport");
 const passportLocalMongoose = require("passport-local-mongoose");
 var https = require("https");
 var path = require("path");
-var AWS = require('aws-sdk');
+//var AWS = require('aws-sdk');
 
 
 
@@ -31,7 +31,7 @@ var pubnub = new PubNub({
     secretKey: "sec-c-YWM1MzAyMGYtODljNi00MGJmLWFhM2MtNWVkNjBiNGI5NzEy"
 });
 
-app.use(time.init)
+//app.use(time.init)
 app.use(express.static("public"));
 app.set('view engine', 'ejs');
 app.use(bodyParser.urlencoded({
